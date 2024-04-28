@@ -203,4 +203,30 @@ public class OrderServiceImpl implements OrderService {
         }
         return new PageResult(page.getTotal(),list);
     }
+
+
+    /**
+     * 查询订单详情
+     * @param id
+     * @return
+     */
+    public OrderVO details(Long id) {
+        //根据id查询订单
+        Orders orders = orderMapper.getById(id);
+
+        //根据订单id查询订单明细
+        List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
+
+        //这里为什么不能直接用id查询订单明细呢
+        //1. 需要copy属性 , orders对象是必不可少的
+        //2. 如果直接用id查询订单明细, 那么mapper中的sql语句 会匹配不到 order_id = #{orderId}
+
+        //将该订单及详情封装到OrderVO并返回
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders,orderVO);
+        orderVO.setOrderDetailList(orderDetailList);
+
+        return orderVO;
+
+    }
 }
