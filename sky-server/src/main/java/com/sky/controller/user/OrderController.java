@@ -32,12 +32,13 @@ public class OrderController {
 
     /**
      * 用户下单
+     *
      * @param ordersSubmitDTO
      * @return
      */
     @PostMapping("/submit")
     @ApiOperation("用户下单")
-    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO ordersSubmitDTO){
+    public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO ordersSubmitDTO) {
         log.info("用户下单,参数为 {}", ordersSubmitDTO);
         OrderSubmitVO orderSubmitVO = orderService.submitOrder(ordersSubmitDTO);
 
@@ -65,26 +66,41 @@ public class OrderController {
 
     /**
      * 历史订单查询
-     * @param ordersPageQueryDTO
+     *
+     * @param ordersPageQueryDTO 订单状态 1待付款 2待接单 3已接单 4派送中 5已完成 6已取消
      * @return
      */
     @GetMapping("/historyOrders")
     @ApiOperation("历史订单查询")
-    public Result<PageResult> page(OrdersPageQueryDTO ordersPageQueryDTO){
+    public Result<PageResult> page(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageResult pageResult = orderService.pageQuery4User(ordersPageQueryDTO);
         return Result.success(pageResult);
     }
 
     /**
      * 查询订单详情
+     *
      * @param id 订单id
      * @return
      */
     @GetMapping("/orderDetail/{id}")
     @ApiOperation(("查询订单详情"))
-    public Result<OrderVO> details(@PathVariable Long id){
+    public Result<OrderVO> details(@PathVariable Long id) {
         OrderVO orderVO = orderService.details(id);
         return Result.success(orderVO);
+    }
+
+
+    /**
+     *用户取消订单
+     * @param id 订单id
+     * @return
+     */
+    @PutMapping("/cancel/{id}")
+    @ApiOperation("取消订单")
+    public Result cancel(@PathVariable Long id) throws Exception {
+        orderService.userCancelById(id);
+        return Result.success();
     }
 
 }
